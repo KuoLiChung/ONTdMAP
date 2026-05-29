@@ -117,7 +117,7 @@ ontdmap dmr-qc \
 
 # 6. dmrQC_PCAnHM.py
 ontdmap dmr-pca \
-  -d dmr.mapQ20.primary.CpG.combine_strands.seg.bed \
+  -d DMR_QC_pass.bed \
   -u union.bed \
   -o dmrQC \
   --top_heatmap N \
