@@ -259,7 +259,7 @@ def main():
         print(f"[INFO] Step 1. Loading DMR file and building interval trees: {args.input_dmr}")
         dmr_cols = ['chrom', 'chrom_start', 'chrom_end', 'dmr_id', 'cohen_h',
                     'strand', 'effect_size', 'DM_status']
-        dmr_df = pd.read_csv(args.input_dmr, sep='\t', header=0,
+        dmr_df = pd.read_csv(args.input_dmr, sep='\t', header=None,
                              usecols=range(8), names=dmr_cols)
 
         chrom_trees = defaultdict(IntervalTree)
