@@ -86,7 +86,7 @@ ONTdMAP relies on a mix of Python and R environments, along with standard bioinf
 
 ## Usage and Execution
 
-The pipeline is executed via the `ontdmap` command followed by specific subcommands. Run `ontdmap <subcommand> -h` (e.g., `ontdmap sample-qc -h`) or refer to the [script_description.txt](https://github.com/KuoLiChung/ONTdMAP/script_description.txt) for a complete list of parameters and module descriptions. Below is the standard execution order for a complete methylation analysis.
+The pipeline is executed via the `ontdmap` command followed by specific subcommands. Run `ontdmap <subcommand> -h` (e.g., `ontdmap sample-qc -h`) or refer to the [script_description.txt](./script_description.txt) for a complete list of parameters and module descriptions. Below is the standard execution order for a complete methylation analysis.
 
 **Reference Data Preparation**
 The reference files required for the pipeline (including promoter coordinates, CpG genomic positions, and ENCODE blacklists) are provided in the [Releases](https://github.com/KuoLiChung/ONTdMAP/releases/tag/v1.0) section of this repository. Download the required files and define their absolute paths before executing the workflow.
