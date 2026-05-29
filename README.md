@@ -14,7 +14,7 @@ This pipeline processes [modkit](https://github.com/nanoporetech/modkit) outputs
 ## Key Features
 
 - **DNA Input Compatibility**: Designed for Case vs. Control group comparisons using both genomic DNA and cell-free DNA (cfDNA) inputs.
-- **Unified Matrix Synchronization**: Consolidates independent multi-sample `bedMethyl` files into a single coordinate-matched methylation matrix.
+- **Unified Matrix Synchronization**: Consolidates independent multi-sample bedMethyl files into a single coordinate-matched methylation matrix.
 - **Integrated Batch Visualization**: Establishes a continuous downstream workflow where gene lists (`dmr-pathway`) feed directly into the query tool (`cpg`) to output target BED files for automated batch boxplot rendering (`box`).
 
 ---
