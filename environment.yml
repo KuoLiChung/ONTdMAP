@@ -1,0 +1,32 @@
+name: ontdmap
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python>=3.8
+  - pip
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - scipy
+  - scikit-learn
+  - intervaltree
+  - adjusttext
+  - pysam
+  - bedtools
+  - htslib
+  - gzip
+  - r-base
+  - r-readr
+  - r-dplyr
+  - r-ggplot2
+  - r-gprofiler2
+  - bioconductor-annotatr
+  - bioconductor-genomicranges
+  - bioconductor-clusterprofiler
+  - bioconductor-org.hs.eg.db
+  - bioconductor-dose
+  - bioconductor-reactomepa
+  - bioconductor-enrichplot

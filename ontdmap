@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+
+"""
+=============================================================================
+ ONTdMAP: ONT DNA Methylation Analysis Pipeline
+=============================================================================
+
+Description:
+    ONTdMAP is a comprehensive, end-to-end command-line interface (CLI) workflow 
+    designed for the analysis of Oxford Nanopore Technologies (ONT) cfDNA CpG 5mC 
+    methylation data. 
+
+    The pipeline takes modkit-generated bedMethyl files as primary input and 
+    facilitates a wide array of downstream analytical tasks, including:
+      - Sample-level and Group-level quality control (QC).
+      - Targeted spatial profiling across genomic regions (e.g., Transcription 
+        Start Sites).
+      - Dimensionality reduction and clustering (PCA and Hierarchical Clustering).
+      - Differentially Methylated Region (DMR) filtering, genomic annotation, 
+        and pathway enrichment analysis with visulization.
+      - Customizable CpG-based methylation boxplot generation.
+
+Dependencies:
+    Requires Python 3.8+ and standard scientific computing libraries (pandas, 
+    numpy, matplotlib, seaborn, scipy, scikit-learn), alongside bioinformatics 
+    tools such as pysam and bedtools.
+
+Usage:
+    ontdmap <command> [options]
+"""
+
+import sys
+import os
+import subprocess
+
+
+# Dynamically determine the directory where this script is located.
+# This ensures compatibility with Conda environments where the wrapper and 
+# backend scripts are installed together in the environment's 'bin' directory.
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
+# Core dictionary mapping: Subcommand names ➜ Actual Python backend script names
+COMMANDS = {
+    "sample-qc": "methylQC_SampleLevel.py",
+    "uni": "CreateUnionBed.py",
+    "group-qc": "methylQC_GroupLevel.py",
+    "group-tss": "methylQC_GroupLevel_TSS.py",
+    "group-pca": "methylQC_PCAnHM.py",
+    "dmr-qc": "dmrQC.py",
+    "dmr-pca": "dmrQC_PCAnHM.py",
+    "dmr-pathway": "dmrEnrichPath.py",
+    "cpg": "CpGsearch.py",
+    "box": "methylBox.py"
+}
+
+def print_global_help():
+    """
+    Prints the global help documentation for ONTdMAP.
+    Triggered when the user provides no subcommands or uses the -h/--help flag globally.
+    """
+    help_text = """
+=============================================================================
+ ONTdMAP: ONT DNA Methylation Analysis Pipeline
+=============================================================================
+A comprehensive workflow for ONT cfDNA CpG 5mC methylation analysis.
+
+Usage: ontdmap <command> [options]
+
+Available Subcommands:
+
+  [1. Pre-processing & Matrix Generation]
+    sample-qc     Generate sample-level QC metrics and visualizations.
+    uni           Synchronize bedMethyl datasets into a TSV matrix.
+
+  [2. Group-Level Profiling]
+    group-qc      Evaluate group-level read depth and methylation distributions.
+    group-tss     Perform spatial profiling of CpG methylation across TSS.
+    group-pca     Run group-level PCA and hierarchical clustering heatmaps.
+
+  [3. Differentially Methylated Regions (DMR)]
+    dmr-qc        Apply QC filters and annotations to modkit DMR segments.
+    dmr-pca       Perform DMR-level PCA and hierarchical clustering.
+    dmr-pathway   Run functional annotation and pathway enrichment.
+
+  [4. Utilities & Visualization]
+    cpg           Query annotated CpG BED databases (single/batch mode).
+    box           Generate highly customizable CpG-based methylation boxplots.
+
+To see the detailed arguments for a specific tool, run:
+  ontdmap <command> -h
+=============================================================================
+"""
+    print(help_text)
+
+def main():
+    # Case 1: No arguments provided, or global help requested
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+        print_global_help()
+        sys.exit(0)
+
+    # Extract the subcommand (e.g., 'dmr-qc')
+    subcommand = sys.argv[1]
+
+    # Case 2: Subcommand is not recognized in the mapping dictionary
+    if subcommand not in COMMANDS:
+        print(f"\n[Error] Unrecognized command: '{subcommand}'\n", file=sys.stderr)
+        print_global_help()
+        sys.exit(1)
+
+    # Case 3: Subcommand recognized; prepare to call the backend script
+    target_script = COMMANDS[subcommand]
+    script_path = os.path.join(SCRIPT_DIR, target_script)
+
+    # Failsafe check: Ensure the backend script physically exists in the directory
+    if not os.path.isfile(script_path):
+        print(f"[Error] Backend script missing at '{script_path}'", file=sys.stderr)
+        print("Please ensure your Conda environment or installation path is intact.", file=sys.stderr)
+        sys.exit(1)
+
+    # Pass sys.argv[2:] (which includes underlying flags like -h or input parameters) directly to the backend
+    cmd_to_run = ["python", script_path] + sys.argv[2:]
+
+    try:
+        # Execute the backend script, handing over standard output and standard error
+        result = subprocess.run(cmd_to_run)
+        sys.exit(result.returncode)
+    except KeyboardInterrupt:
+        print("\n[ONTdMAP] Process terminated by user.", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"\n[ONTdMAP] An unexpected error occurred: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
