@@ -8,8 +8,7 @@ This pipeline processes [modkit](https://github.com/nanoporetech/modkit) outputs
 - **Dimensionality Reduction**: Executes PCA and hierarchical clustering on both CpG beta-values and M-values.
 - **DMR Isolation & Annotation**: Appiles multi-criterion filtering, masks artifact-prone regions via ENCODE blacklists, and annotates intervals using [annotatr](https://github.com/rcavalcante/annotatr).
 - **Pathway Enrichment (PEA)**: Performs `GO`, `Disease Ontology`, `Reactome`, and `g:Profiler` analyses on hyper- and hypomethylated gene lists.
-- **Locus Targeting & Query**: Extracts targeted annotations from background databases and conducts locus-specific group statistical tests with boxplot visualizations.
-
+- **Locus Query & Visualization**: Queries annotated CpG databases for specific genes or regions, and performs statistical comparisons with boxplot rendering for targeted loci.
 ---
 
 ## Key Features
@@ -36,7 +35,7 @@ This pipeline processes [modkit](https://github.com/nanoporetech/modkit) outputs
 
    - **`uni`**: Synchronizes multi-sample bedMethyl datasets into a unified matrix for group-level analysis.
    - **`group-qc`**: Evaluates and compares distributions of read depth, methylation levels, and detection rates between experimental groups.
-   - **`group-tss`**: Profiles CpG methylation and read depth spatial distributions across TSS windows.
+   - **`group-tss`**: Profiles CpG methylation and read depth spatial distributions across Transcription Start Sites (TSS) windows.
    - **`group-pca`**: Performs principal component analysis and hierarchical clustering on multi-sample methylation matrices.
 
 3. **DMR Discovery, Annotation & QC, and Pathway Enrichment Analysis**
