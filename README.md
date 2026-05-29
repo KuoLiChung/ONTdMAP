@@ -3,39 +3,46 @@
 **ONTdMAP** is a comprehensive, Python-based bioinformatics toolkit designed for the multi-level quality control, profiling, and downstream analysis of DNA (gDNA & cfDNA) CpG methylation (5mC & 5hmC) using Oxford Nanopore Technologies (ONT) sequencing data. 
 
 This pipeline processes [modkit](https://github.com/nanoporetech/modkit) outputs and scales from single-sample metrics to group-level comparisons. The workflow includes:
-- **Quality Control (QC)**: Comprehensive sample-level and group-level metrics, evaluating global and promoter-specific read depth and methylation profiles.
-- **Spatial Profiling**: Targeted spatial methylation profiling across specified genomic regions (e.g., Transcription Start Sites).
-- **Dimensionality Reduction**: PCA and Hierarchical Clustering for both CpG beta values and M-values.
-- **DMR Analysis & Annotation**: Multi-criterion filtering for Differentially Methylated Regions (DMRs), ENCODE blacklist masking, and robust genomic annotation using [annotatr](https://github.com/rcavalcante/annotatr).
-- **Pathway Enrichment Analysis (PEA)**: Fully automated downstream GO, Disease Ontology, Reactome, and g:Profiler enrichment analyses for hyper- and hypomethylated gene sets.
-- **Targeted Visualization**: Customizable CpG-based methylation boxplots and advanced query tools for annotated CpG BED databases.
+- **Quality Control (QC)**: Evaluates global and region-specific read depth and methylation profiles at both sample and group levels.
+- **Spatial Profiling**: Maps methylation and read depth distributions within targeted genomic windows (e.g., Transcription Start Sites).
+- **Dimensionality Reduction**: Executes PCA and hierarchical clustering on both CpG beta-values and M-values.
+- **DMR Isolation & Annotation**: Appiles multi-criterion filtering, masks artifact-prone regions via ENCODE blacklists, and annotates intervals using [annotatr](https://github.com/rcavalcante/annotatr).
+- **Pathway Enrichment (PEA)**: Performs `GO`, `Disease Ontology`, `Reactome`, and `g:Profiler` analyses on hyper- and hypomethylated gene lists.
+- **Locus Targeting & Query**: Extracts targeted annotations from background databases and conducts locus-specific group statistical tests with boxplot visualizations.
 
 ---
 
 ## Key Features
 
-- Designed for group comparisons applicable to both genomic and cell-free DNA.
-- Matrix synchronization from individual `bedMethyl` files.
-- Spatial TSS profiling for methylation and read depth distributions.
-- DMR annotation and pathway enrichment filtering.
-- Single and batch CpG query system against tabix-indexed background databases.
+- **DNA Input Compatibility**: Designed for Case vs. Control group comparisons using both genomic DNA and cell-free DNA (cfDNA) inputs.
+- **Unified Matrix Synchronization**: Consolidates independent multi-sample `bedMethyl` files into a single coordinate-matched methylation matrix.
+- **Integrated Batch Visualization**: Establishes a continuous downstream workflow where gene lists (`dmr-pathway`) feed directly into the query tool (`cpg`) to output target BED files for automated batch boxplot rendering (`box`).
 
 ---
 
 ## Workflow
 
 1. **Sample-Level Methylation QC**
-
+   <p align="center">
+     <img src="./flowchart/ONTdMAP_SampleLevel.png" width="400">
+   </p>
+   
    - **`sample-qc`**: Generates sample-level methylation metrics and spatial profiles from individual bedMethyl outputs.
 
 2. **Group-Level Methylation QC**
+   <p align="center">
+     <img src="./flowchart/ONTdMAP_GroupLevel.png" width="600">
+   </p>
 
    - **`uni`**: Synchronizes multi-sample bedMethyl datasets into a unified matrix for group-level analysis.
    - **`group-qc`**: Evaluates and compares distributions of read depth, methylation levels, and detection rates between experimental groups.
-   - **`group-tss`**: Profiles CpG methylation and read depth spatial distributions across transcription start site (TSS) windows.
+   - **`group-tss`**: Profiles CpG methylation and read depth spatial distributions across TSS windows.
    - **`group-pca`**: Performs principal component analysis and hierarchical clustering on multi-sample methylation matrices.
 
 3. **DMR Discovery, Annotation & QC, and Pathway Enrichment Analysis**
+   <p align="center">
+     <img src="./flowchart/ONTdMAP_DMR.png">
+   </p>
 
    - **`dmr-qc`**: Applies quality control filters and genomic annotations to differentially methylated regions (DMRs).
    - **`dmr-pca`**: Generates PCA plots and hierarchical clustering heatmaps specific to QC-filtered DMRs.
@@ -74,13 +81,13 @@ ONTdMAP relies on a mix of Python and R environments, along with standard bioinf
    conda activate ontdmap
    chmod +x ontdmap
    chmod +x *.py *.sh *.R
-   ```
+```
 
 ---
 
 ## Usage and Execution
 
-The pipeline is executed via the `ontdmap` command followed by specific subcommands. Run `ontdmap <subcommand> -h` (e.g., `ontdmap sample-qc -h`) or refer to the [script_description.txt](https://github.com/KuoLiChung/ONTdMAP/**********) included in this repository for a complete list of parameters and module descriptions. Below is the standard execution order for a complete methylation analysis.
+The pipeline is executed via the `ontdmap` command followed by specific subcommands. Run `ontdmap <subcommand> -h` (e.g., `ontdmap sample-qc -h`) or refer to the [script_description.txt](https://github.com/KuoLiChung/ONTdMAP/script_description.txt) for a complete list of parameters and module descriptions. Below is the standard execution order for a complete methylation analysis.
 
 **Reference Data Preparation**
 The reference files required for the pipeline (including promoter coordinates, CpG genomic positions, and ENCODE blacklists) are provided in the [Releases](https://github.com/KuoLiChung/ONTdMAP/releases/tag/v1.0) section of this repository. Download the required files and define their absolute paths before executing the workflow.
@@ -131,7 +138,7 @@ The reference files required for the pipeline (including promoter coordinates, C
    ```
 
 3. **Group-Level TSS Profiling**
-   Profile methylation dynamics across Transcription Start Sites (TSS).
+   Profile methylation dynamics across TSS.
    
    3.1. Explore data distribution (before filtering):
    ```bash
@@ -149,7 +156,7 @@ The reference files required for the pipeline (including promoter coordinates, C
    ```
 
    3.2. Implement data filtering:
-   Apply specific thresholds for depth and detection rate.
+   Apply specific thresholds for read depth and detection rate.
    ```bash
    ontdmap group-tss \
       -i union.bed \
@@ -165,7 +172,7 @@ The reference files required for the pipeline (including promoter coordinates, C
    ```
 
 4. **Group-Level PCA and Hierarchical Clustering**
-   Perform Principal Component Analysis and construct hierarchical clustering heatmaps.
+   Perform Principal Component Analysis and construct hierarchical clustering.
    
    4.1. Explore variance distribution and save cache file:
    ```bash
@@ -183,7 +190,7 @@ The reference files required for the pipeline (including promoter coordinates, C
       -t 32
    ```
 
-   4.2. Load cache file and implement PCA and Hierarchical Clustering (HC):
+   4.2. Load cache file and implement PCA and Hierarchical Clustering:
    ```bash
    ontdmap group-pca \
       -i union.bed \
@@ -214,10 +221,10 @@ The reference files required for the pipeline (including promoter coordinates, C
    ```
 
 6. **DMR-Level PCA and Hierarchical Clustering**
-   Perform PCA and construct heatmaps specifically for QC-filtered DMRs. Set `--top_heatmap` to 0 for using all DMRs in heatmap.
+   Perform PCA and construct heatmaps specifically for QC-filtered DMRs. Set `--top_heatmap` to 0 for using all DMRs in the heatmap.
    ```bash
    ontdmap dmr-pca \
-      -d dmr.mapQ20.primary.CpG.combine_strands.seg.bed \
+      -d DMR_QC_pass.bed \
       -u union.bed \
       -o dmrQC \
       --top_heatmap N \
@@ -229,7 +236,7 @@ The reference files required for the pipeline (including promoter coordinates, C
    ```
 
 7. **DMR Pathway Enrichment Analysis**
-   Execute pathway enrichment analysis (e.g., GO, Reactome) on the integrated DMR annotation table.
+   Execute pathway enrichment analysis on the integrated DMR annotation table.
    ```bash
    ontdmap dmr-pathway \
       -i Integrated_DMRs.tsv \
@@ -330,11 +337,11 @@ Specific modules generate text-based summaries and tabular data to document para
 
 ### Visualizations
 
-The pipeline generates standardized visualizations across different modules. Example output plots can be found in the [example_plot](https://github.com/KuoLiChung/ONTdMAP/XXXXXX) directory. Plots are grouped by their analytical category below.
+The pipeline generates standardized visualizations across different modules. Example output plots can be found in the [example_plot](https://github.com/KuoLiChung/ONTdMAP/example_plot) directory. Plots are grouped by their analytical category below.
 
 1. **Data Distribution & Quality Control**
    
-   ***Subcommand***: `sample-qc`, `group-qc`
+   ***Subcommand***: [`sample-qc`](https://github.com/KuoLiChung/ONTdMAP/example_plot/sample-qc), [`group-qc`](https://github.com/KuoLiChung/ONTdMAP/example_plot/group-qc)
    
    Evaluates the overall quality of methylation data across global and promoter-specific regions. `sample-qc` generates single-sample distributions, while `group-qc` generates comparative distributions between experimental groups.
 
@@ -344,9 +351,9 @@ The pipeline generates standardized visualizations across different modules. Exa
 
 2. **Spatial TSS Profiling**
 
-   ***Subcommand***: `sample-qc`, `group-qc`
+   ***Subcommand***: [`sample-qc`](https://github.com/KuoLiChung/ONTdMAP/example_plot/sample-qc), [`group-tss`](https://github.com/KuoLiChung/ONTdMAP/example_plot/group-tss)
 
-   Maps methylation and sequencing metrics relative to the Transcription Start Site (TSS) window (e.g., +/- 2000bp). The `group-tss` module generates both unfiltered and threshold-filtered versions of these profiles.
+   Maps methylation and sequencing metrics relative to the TSS window (e.g., +/- 2000bp). The `group-tss` module generates both unfiltered and threshold-filtered versions of these profiles.
 
    - **CpG Density**: Histograms counting the number of CpG sites within each spatial bin.
    - **Read Depth Profile**: Line plots tracking the mean depth and interquartile range across the TSS window.
@@ -355,7 +362,7 @@ The pipeline generates standardized visualizations across different modules. Exa
 
 3. **Dimensionality Reduction & Clustering**
 
-   ***Subcommand***: `group-pca`, `dmr-pca`
+   ***Subcommand***: [`group-pca`](https://github.com/KuoLiChung/ONTdMAP/example_plot/group-pca), [`dmr-pca`](https://github.com/KuoLiChung/ONTdMAP/example_plot/dmr-pca)
 
    Evaluates sample grouping and identifies variance patterns using global sites, promoter sites, or filtered DMRs.
 
@@ -365,7 +372,7 @@ The pipeline generates standardized visualizations across different modules. Exa
 
 4. **DMR Characterization & Annotation**
    
-   ***Subcommand***: `dmr-qc`
+   ***Subcommand***: [`dmr-qc`](https://github.com/KuoLiChung/ONTdMAP/example_plot/dmr-qc)
 
    Profiles the characteristics of DMRs identified by `modkit` after applying QC thresholds.
 
@@ -379,10 +386,11 @@ The pipeline generates standardized visualizations across different modules. Exa
 
    ***Subcommand***: `dmr-pathway`
 
-   Visualizes functional pathways associated with annotated DMRs using `clusterProfiler` and `gprofiler2`.
+   Visualizes functional pathways associated with annotated DMRs using [clusterProfiler](https://github.com/YuLab-SMU/clusterProfiler) and [gprofiler2](https://biit.cs.ut.ee/gprofiler/page/r).
 
 6. **Targeted Region Statistics**
-   ***Subcommand***: `box`
+
+   ***Subcommand***: [`box`](https://github.com/KuoLiChung/ONTdMAP/example_plot/box)
 
    Provides targeted statistical comparisons for user-defined genomic coordinates or gene lists.
 
@@ -391,7 +399,7 @@ The pipeline generates standardized visualizations across different modules. Exa
 ---
 
 ## Prerequisites
-An [environment.yml]() file is included in this repository to configure the required dependencies via Conda.
+An [environment.yml](https://github.com/KuoLiChung/ONTdMAP/environment.yml) file is included in this repository to configure the required dependencies via Conda.
 
 ### Python Environment
 
@@ -439,7 +447,5 @@ The following external tools are required and should be available in your system
 ## Disclaimer & Acknowledgements
 
 For Research Use Only. 
-
-ONTdMAP is provided for research purposes only and is not intended and not validated for clinical diagnostic use.
 
 This pipeline integrates and depends on the following open-source tools and databases: `modkit`, `annotatr`, `clusterProfiler`, `gprofiler2`, `bedtools`, `htslib`, `ENCODE`.
