@@ -150,7 +150,7 @@ ontdmap cpg single\
   --query_type symbol \
   --cpg_bed ${hg38_annotcpg_bed} \
   --gene_region promoter \
-  --CpG_regions island,shore,shelf \
+  --CpG_region island,shore,shelf \
   --name 'GeneSymbol; promoter; island, shore, shelf' \
   --output GeneSymbol_promoter_island_shore_shelf.bed \
   --overwrite
