@@ -66,10 +66,10 @@ def parse_args():
     ALLOWED_CPG_REGIONS  = {'all', 'island', 'shore', 'shelf', 'intercgi'}
 
     # Region Subset Selection
-    parser.add_argument('--gene_region', default='all', type=check_comma_separated(ALLOWED_GENE_REGIONS),
+    parser.add_argument('--gene_regions', default='all', type=check_comma_separated(ALLOWED_GENE_REGIONS),
                             help="Available Regions: all, promoter, 5utr, exon, intron, 3utr, and intergenic \n"
                                  "Gene region filter (Default: all). Comma-separated for multiple values.\n")
-    parser.add_argument('--cpg_region', default='all', type=check_comma_separated(ALLOWED_CPG_REGIONS),
+    parser.add_argument('--cpg_regions', default='all', type=check_comma_separated(ALLOWED_CPG_REGIONS),
                             help="Available Regions: all, island, shore, shelf, and intercgi \n"
                                  "CpG context region filter (Default: all). Comma-separated for multiple values.")
 
@@ -108,7 +108,7 @@ def map_regions_to_annot_types(gene_regions, cpg_regions):
 
     Parameters
     ----------
-    gene_regions : list of str
+    : list of str
         Selected gene region labels (e.g., ['promoter', 'exon']).
     cpg_regions : list of str
         Selected CpG region labels (e.g., ['island', 'shore']).
@@ -171,7 +171,7 @@ def main():
         f"- **min_sites** : {args.min_sites}",
         f"- **min_depth** : {args.min_depth}",
         f"- **gene_regions** : {', '.join(args.gene_regions)}",
-        f"- **CpG_regions** : {', '.join(args.CpG_regions)}",
+        f"- **CpG_regions** : {', '.join(args.cpg_regions)}",
         f"- **remove_overlap_genes** : {args.remove_overlap_genes}",
         f"- **P-value cutoff** (Rscript) : {args.p_cutoff}",
         f"- **Q-value cutoff** (Rscript) : {args.q_cutoff}",
@@ -204,7 +204,7 @@ def main():
     # ==========================================
     # Filter 2: Region Intersection (Gene and CpG)
     # ==========================================
-    target_gene_types, target_cpg_types = map_regions_to_annot_types(args.gene_regions, args.CpG_regions)
+    target_gene_types, target_cpg_types = map_regions_to_annot_types(args.gene_regions, args.cpg_regions)
 
     dmr_set_genes = set(df_target['dmr_id'])
     if target_gene_types:
