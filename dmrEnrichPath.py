@@ -526,7 +526,7 @@ cat("\\n>>> R enrichment analysis complete.\\n")
     print("\n[Info] Executing R enrichment script...")
     try:
         subprocess.run(
-            ["conda", "run", "-n", "r-enrich", "Rscript", r_script_path],
+            ["Rscript", r_script_path],
             check=True
         )
         print("[Info] Enrichment analysis complete.")
