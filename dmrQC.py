@@ -650,7 +650,7 @@ def main():
     # Step 4: Genomic annotation via R/annotatr
     df_pass['strand']    = '*'
     df_pass['DM_status'] = np.where(df_pass['effect_size'] > 0, 'Hypo', 'Hyper')
-    bed_out = os.path.join(outdir, "QC_pass.bed")
+    bed_out = os.path.join(outdir, "DMR_QC_pass.bed")
     cols = ['chrom', 'chrom_start', 'chrom_end', 'dmr_id', 'cohen_h', 'strand',
             'effect_size', 'DM_status', 'depth_A', 'depth_B']
     df_pass[cols].to_csv(bed_out, sep='\t', index=False, header=False)
