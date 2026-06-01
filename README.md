@@ -241,7 +241,7 @@ The reference files required for the pipeline (including promoter coordinates, C
       -i Integrated_DMRs.tsv \
       -o PEA \
       --gene_regions promoter \
-      --cpg_region island,shore,shelf \
+      --cpg_regions island,shore,shelf \
       --min_sites 0 \
       --min_depth 8 \
       --remove_overlap_genes \
