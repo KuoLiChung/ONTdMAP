@@ -157,7 +157,8 @@ class FastDataProcessor:
 
         if not is_valid:
             self.logger.info("Building tabix-compatible format: sort -> bgzip -> index...")
-            base_name  = input_path.name.replace('.gz', '').replace('.bed', '')
+            file_name = os.path.basename(input_path)
+            base_name = file_name.replace('.gz', '').replace('.bed', '')
             sorted_bed = self.outdir / f"{base_name}_sorted.bed"
             final_gz   = self.outdir / f"{base_name}_sorted.bed.gz"
 
