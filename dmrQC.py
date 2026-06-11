@@ -649,7 +649,7 @@ def main():
 
     # Step 4: Genomic annotation via R/annotatr
     df_pass['strand']    = '*'
-    df_pass['DM_status'] = np.where(df_pass['effect_size'] < 0, 'Hypo', 'Hyper')
+    df_pass['DM_status'] = np.where(0 > df_pass['effect_size'], 'Hypo', 'Hyper')
     bed_out = os.path.join(outdir, "DMR_QC_pass.bed")
     cols = ['chrom', 'chrom_start', 'chrom_end', 'dmr_id', 'cohen_h', 'strand',
             'effect_size', 'DM_status', 'depth_A', 'depth_B']
